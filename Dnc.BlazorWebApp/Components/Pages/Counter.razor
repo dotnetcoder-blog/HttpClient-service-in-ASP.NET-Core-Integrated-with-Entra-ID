@@ -1,0 +1,104 @@
+﻿@page "/service"
+@rendermode InteractiveServer
+@using Dnc.BlazorWebApp.Services
+@using Dnc.Objects
+@inject ICustomerApiService CustomerApiService
+
+<PageTitle>Counter</PageTitle>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <img src="apitoapi.png" alt="Customer image" class="mb-3 img-fluid" />   
+    </div>    
+    
+    <div class="text-center mb-4">
+        <button class="btn btn-primary" @onclick="()=>GetAsServiceToService()">Service => Customer API (Client Credentials flow)</button>
+    </div>
+    @if (Customers.Any())
+    {
+        <div class="container mt-5">
+    <h3 class="text-center">Customers from Customer API</h3>
+    <h3 class="text-center">Service calling Service (Credentials flow)</h3>
+    <div class="row">
+        @foreach (var customer in Customers)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title">@customer.FirstName @customer.LastName</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Email:</strong> @customer.Email</p>
+                                <h6 class="card-subtitle mb-2 text-danger">Orders:</h6>
+                        @if (customer.Orders != null && customer.Orders.Any())
+                        {
+                            <ul class="list-group">
+                                @foreach (var order in customer.Orders)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Order ID: @order.OrderId
+                                        <span class="badge bg-primary rounded-pill">@order.TotalAmount.ToString("C")</span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No Orders</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+    }
+            @if (loading)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border custom-spinner" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+</div>
+
+@code {
+
+    private IEnumerable<Customer> Customers = new List<Customer>();
+    private bool loading = false;
+
+    private async Task GetAsServiceToService()
+    {
+        loading = true;
+        Customers = await CustomerApiService.GetCustomers();
+        loading = false;
+    }
+}
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .text-danger {
+        color: red;
+    }
+
+    .img-fluid {
+        max-width: 300px;
+        height: auto;
+    }
+        .custom-spinner {
+        width: 3rem;
+        height: 3rem;
+    }
+</style>
+
+
+
+

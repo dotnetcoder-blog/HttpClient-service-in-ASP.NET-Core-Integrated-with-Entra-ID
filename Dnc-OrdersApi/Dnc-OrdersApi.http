@@ -1,0 +1,6 @@
+@Dnc_OrdersApi_HostAddress = http://localhost:5009
+
+GET {{Dnc_OrdersApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
